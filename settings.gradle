@@ -1,0 +1,3 @@
+include ':playground'
+include ':app'
+rootProject.name = "KotlinPlayground"
