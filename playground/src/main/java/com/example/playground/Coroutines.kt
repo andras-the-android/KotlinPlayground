@@ -1,9 +1,7 @@
 package com.example.playground
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import java.lang.IllegalStateException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -127,17 +125,63 @@ class Coroutines {
 
             runBlocking { // Creates a coroutine scope
                 prnt("task 2 started")
-                delay(2000L)
+                Thread.sleep(2000L)
                 prnt("task 2 finished")
             }
 
             prnt("stop")
         }
     }
+
+    private var customScope = MainScope()
+
+    fun aaaaa() = runBlocking<Unit> {
+        // launch a coroutine to process some kind of incoming request
+        val request = launch {
+            // it spawns two other jobs, one with GlobalScope
+            GlobalScope.launch {
+                println("job1: I run in GlobalScope and execute independently!")
+                delay(1000)
+                println("job1: I am not affected by cancellation of the request")
+            }
+            // and the other inherits the parent context
+            launch {
+                delay(100)
+                println("job2: I am a child of the request coroutine")
+                delay(1000)
+                println("job2: I will not execute this line if my parent request is cancelled")
+            }
+        }
+        delay(500)
+        request.cancel() // cancel processing of the request
+        delay(1000) // delay a second to see what happens
+        println("main: Who has survived request cancellation?")
+    }
+
+    fun bbbb() {
+        GlobalScope.async {
+            throw IllegalStateException("hahaha")
+        }.start()
+    }
+
+    fun jobb() {
+        GlobalScope.launch {
+            val job = launch(Dispatchers.IO) {
+                var counter = 0
+                while(true) {
+                    println("xxx hello ${counter++}")
+                }
+            }
+            println("xxx kill")
+            job.cancel()
+        }
+
+    }
 }
 
 fun main() {
-    Coroutines().scope()
+    Coroutines().jobb()
+    prnt("ended")
 }
 
 fun prnt(s: String) = println(s + " - " + Thread.currentThread().name)
