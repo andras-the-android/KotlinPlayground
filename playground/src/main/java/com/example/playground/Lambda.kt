@@ -21,6 +21,10 @@ class Lambda {
 
     }
 
+    private fun aFunctionMatchingToAaa2sLambda(b: Boolean) {
+
+    }
+
     private fun  bbb(a: Int, c: Callback) {
         if (a > 0) {
             c.vvvv("bla", false)
@@ -35,11 +39,15 @@ class Lambda {
 
     fun something() {
         aaa(1) { _: String, bl: Boolean ->  print("hello $bl")}
-        aaa(1) { _: String, bl: Boolean ->  print("hello $bl")}
+        aaa(1) { _: String, _: Boolean ->
+            // it can return from the enclosing function
+            return@aaa
+        }
 
         aaa2(1) { bl: Boolean ->  print("hello $bl")}
         aaa2(1) { bl ->  print("hello $bl")}
         aaa2(1) { print("hello $it")}
+        aaa2(1, this::aFunctionMatchingToAaa2sLambda)
 
         //kotlin interface can`t be converted to lambda
         bbb(1, object: Callback {
@@ -54,6 +62,8 @@ class Lambda {
     interface Callback {
         fun vvvv(str: String, bl: Boolean)
     }
+
+
 
 
 }

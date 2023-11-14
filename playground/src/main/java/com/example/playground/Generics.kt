@@ -81,9 +81,11 @@ class Generics {
     }
 
     init {
+// compile error
 //        d1(D<Base>())
         d1(D<EvenMoreDerived>())
         d2(D<Base>())
+// compile error
 //        d2(D<EvenMoreDerived>())
     }
 }
