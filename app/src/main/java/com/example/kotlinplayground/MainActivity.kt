@@ -11,6 +11,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         loggerAdapter = { s -> Log.d("xxx", s) }
-        Coroutines().jobb()
+        Coroutines().exception()
     }
 }
