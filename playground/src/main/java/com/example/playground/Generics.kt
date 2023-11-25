@@ -2,90 +2,112 @@ package com.example.playground
 
 class Generics {
 
-    open class Base
+    open class Parent
 
-    open class Derived: Base()
+    open class Basic: Parent()
 
-    open class EvenMoreDerived: Derived()
+    open class Child: Basic()
 
 
-    //-------------------------------------------------
+    class Out {
+        // declaration-site variance
+        class ClassOut<out T> { // T or it's descendants (covariance)
 
-    class A<out T> {
+            // must be private
+            private var value: T? = null
 
-        fun getT() : T? {
-            return null
-        }
+            fun getT() : T? {
+                return value
+            }
 
-// compile error
+//        compile error
 //        fun setT(t: T) {
-//
+//           value = t
 //        }
 
+//        prohibiting setters doesn't mean that this object is immutable.
+//        these limitations are only for ensuring type safety
+            fun clear() {
+                value = null
+            }
+        }
+
+        val classOut: ClassOut<Basic> = ClassOut<Child>()
+
+        // this is why in parameters are prohibited
+        fun testOut() {
+            val classOutChild: ClassOut<Child> = ClassOut()
+            val classOutBasic: ClassOut<Basic> = classOutChild
+            // classOutBasic.setT(Basic()) ClassCastException
+        }
     }
 
-    val a: A<Derived> = A<EvenMoreDerived>()
 
+    class In {
+        class ClassIn<in T> { // T or it's ancestors (contravariance)
 
-    //-------------------------------------------------
+            // must be private
+            private var value: T? = null
 
-
-
-    class B<in T> {
-
-// compile error
+//        compile error
 //        fun getT() : T? {
-//            return null
+//            return value
 //        }
 
-        fun setT(t: T) {
-
+            fun setT(t: T) {
+                value = t
+            }
         }
 
-    }
-
-    init {
-        val b: B<Derived> = B<Base>()
-        b.setT(EvenMoreDerived())
-    }
-
-    //-------------------------------------------------
-
-
-    class C<in T, out F>
-
-    val c: C<Derived, Derived> = C<Base, EvenMoreDerived>()
-
-    //-------------------------------------------------
-    //type projection
-
-    class D<T> {
-
-        fun getT() : T? {
-            return null
-        }
-
-        fun setT(t: T) {
-
+        // this is why out parameters are prohibited
+        fun testIn() {
+            val classInParent: ClassIn<Parent> = ClassIn<Parent>().apply { setT(Parent()) }
+            val classInBasic: ClassIn<Basic> = classInParent
+            // classInBasic.getT() ClassCastException
         }
     }
 
-    fun d1(dd: D<out Derived>) {
-        dd.getT()
-//        dd.setT(Derived())
-    }
+    class ClassInOut<in T, out F>
 
-    fun d2(dd: D<in Derived>) {
-        dd.getT()
-        dd.setT(Derived())
-    }
+    val classInOut: ClassInOut<Basic, Basic> = ClassInOut<Parent, Child>()
 
-    init {
+    class TypeProjection() {
+
+//        This class can be neither co- nor contravariant in T
+        class ClassStrict<T> {
+
+            fun getT() : T? {
+                return null
+            }
+
+            fun setT(t: T) {
+
+            }
+        }
+
+        private fun funOut(cs: ClassStrict<out Basic>) {
+            cs.getT()
+//            out parameters are read-only
+//            cs.setT(Basic())
+        }
+
+        private fun funIn(dd: ClassStrict<in Basic>) {
+            // in parameters are read-write
+            dd.getT()
+            dd.setT(Basic())
+        }
+
+        init {
+//          type projections (Use-site variance) makes invariant classes behave like co- or contravariant
+
 // compile error
-//        d1(D<Base>())
-        d1(D<EvenMoreDerived>())
-        d2(D<Base>())
+//        funOut(ClassStrict<Parent>())
+            funOut(ClassStrict<Child>())
+            funIn(ClassStrict<Parent>())
 // compile error
-//        d2(D<EvenMoreDerived>())
+//        funIn(ClassStrict<Child>())
+        }
     }
+
+
 }
