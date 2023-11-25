@@ -29,6 +29,9 @@ class Nothing {
             throw Exception("$errorCode")
         }
 
+        // the type of n will be Nothing?
+        val n = null
+
         // the compiler notifies that the execution will be interrupted
         val a = failure()
     }
