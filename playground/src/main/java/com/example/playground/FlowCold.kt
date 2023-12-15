@@ -51,7 +51,7 @@ import kotlinx.coroutines.withContext
 class FlowCold {
 
     class FlowBuilders {
-        val fromOtherComplexTypes = emit1to3
+        val fromOtherComplexTypes = (1..3).asFlow()
 
         val simple = flowOf(1, 2, 3)
 
@@ -61,6 +61,7 @@ class FlowCold {
             emit(3)
         }
     }
+
     class IntermediateOperators {
 
         class Transformation {
@@ -147,6 +148,10 @@ class FlowCold {
 
                 delay(1100)
                 job.cancel()
+            }
+
+            fun debounce() {
+                // TODO implementation
             }
         }
 
