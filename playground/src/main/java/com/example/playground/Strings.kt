@@ -101,6 +101,21 @@ class Strings {
             // turns a cs into a map
             "aaab".associate { char -> char to char.code }, // {a=97, b=98}
         )
+
+        printAll(
+            // turns a cs into a map of arrays
+            "aaab".groupBy { char -> char.code }, // {97=[a, a, a], 98=[b]}
+            "aaab".groupBy(
+                keySelector = { char ->  char.code},
+                valueTransform = { char -> char.uppercaseChar()}
+            ), // {97=[A, A, A], 98=[B]}
+
+        )
+
+        printAll(
+            // [a, aa, b, bb, c, cc, d, dd]
+            "abcd".flatMap { listOf(it, "$it$it") }
+        )
     }
 
     fun splitting() {
@@ -123,8 +138,9 @@ class Strings {
 }
 
 fun main() {
+    Strings().transformation()
     printAll(
-        // TODO continue from flatMap
+        // TODO continue from slice
     )
 }
 
