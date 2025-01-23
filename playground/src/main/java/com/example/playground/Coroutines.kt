@@ -247,7 +247,7 @@ class Coroutines {
 
     private suspend fun cancellableDelayFunction() {
         // throws JobCancellationException if the scope is cancelled
-        yield()
+        yield() // context.ensureActive()
         // delay is cancellable by itself so it's not good for this demonstration
         // unless we call it from this special context
         withContext(NonCancellable) {
