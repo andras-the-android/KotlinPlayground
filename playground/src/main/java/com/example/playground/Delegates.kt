@@ -2,9 +2,13 @@ package com.example.playground
 
 import kotlin.reflect.KProperty
 
+/**
+ * A class that implements an interface but the implementation code is in the delegate object
+ * that is mostly handed over in the constructor.
+ */
 class ClassDelegate {
 
-    interface Delegate {
+    interface DelegateInterface {
 
         val prop: String
 
@@ -12,7 +16,7 @@ class ClassDelegate {
         fun fun2()
     }
 
-    class DelegateImpl: Delegate {
+    class DelegateImpl: DelegateInterface {
 
         override val prop = "prop in DelegateImpl"
 
@@ -28,7 +32,7 @@ class ClassDelegate {
         }
     }
 
-    class SomeClass(private val delegate: Delegate): Delegate by delegate {
+    class SomeClass(private val delegateImpl: DelegateInterface): DelegateInterface by delegateImpl {
 
         override val prop = "prop in SomeClass"
 
@@ -36,7 +40,7 @@ class ClassDelegate {
             // this will not work
             // super.fan2()
             log("fun2 in SomeClass")
-            delegate.fun2()
+            delegateImpl.fun2()
         }
     }
 
@@ -48,6 +52,9 @@ class ClassDelegate {
 
 }
 
+/**
+ * Works like some kind of listener that invoked on every time when a get/set call happens
+ */
 class PropertyDelegate {
 
     private var p: String by Del()

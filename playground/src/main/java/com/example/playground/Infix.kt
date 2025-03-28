@@ -4,6 +4,9 @@ fun main() {
     Infix().start()
 }
 
+/**
+ * It makes possible function invocation with <receiver function argument> style
+ */
 class Infix {
 
     data class SomeClass(val a: Int)
