@@ -388,6 +388,25 @@ class Coroutines {
         }
     }
 
+    // When an exception reaches the root scope without being caught, and the scope doesn't have an
+    // exception handler, it will be swallowed. However, this doesn't mean that it can't cause trouble.
+    // Different systems handle uncaught exceptions differently. This will run properly on local jvm
+    // (only an error will be displayed on the console) but on Android it crashes the entire app uncatchably.
+    fun exceptionPropagation() {
+        scope.launch {
+            prnt("launching coroutine")
+            throw Exception("boom")
+        }
+    }
+
+    // This will behave the same like the CoroutineExceptionHandler wouldn't be there
+    fun exceptionPropagation2() {
+        scope.launch(CoroutineExceptionHandler { _, throwable -> throw throwable }) {
+            prnt("launching coroutine")
+            throw Exception("boom")
+        }
+    }
+
 //    20  Main - main
 //    42  calling coroutineScope - main @coroutine#1
 //    1045  I'm in a coroutine scope - main @coroutine#1
